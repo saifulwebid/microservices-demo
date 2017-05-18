@@ -93,6 +93,36 @@ public class AccountsController {
 	}
 
 	/**
+	 * Withdraw a designated amount from Account.
+	 * 
+	 * @param accountNumber
+	 *            A numeric, 9 digit account number.
+	 * @param request
+	 *            An AmountRequest object reflected from JSON contained in request body.
+	 * @return The finalized account.
+	 * @throws AccountNotFoundException
+	 *             If the number is not recognized.
+	 */
+	@RequestMapping(value = "/accounts/{accountNumber}/withdraw", method = RequestMethod.POST)
+	public Account withdraw(@PathVariable("accountNumber") String accountNumber,
+			@RequestBody AmountRequest request) {
+
+		logger.info("accounts-service withdraw(" + request.getAmount() + ") invoked: " + 
+				accountNumber);
+		
+		Account account = accountRepository.findByNumber(accountNumber);
+		if (account == null)
+			throw new AccountNotFoundException(accountNumber);
+		
+		account.withdraw(request.getAmount());
+		accountRepository.save(account);
+		
+		logger.info("accounts-service withdraw() deposited: " + account);
+		
+		return account;
+	}
+
+	/**
 	 * Fetch accounts with the specified name. A partial case-insensitive match
 	 * is supported. So <code>http://.../accounts/owner/a</code> will find any
 	 * accounts with upper or lower case 'a' in their name.
