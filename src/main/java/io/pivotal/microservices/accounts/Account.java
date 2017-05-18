@@ -94,11 +94,11 @@ public class Account implements Serializable {
 	}
 
 	public void withdraw(BigDecimal amount) {
-		balance.subtract(amount);
+		this.balance = balance.subtract(amount);
 	}
 
 	public void deposit(BigDecimal amount) {
-		balance.add(amount);
+		this.balance = balance.add(amount);
 	}
 
 	@Override
