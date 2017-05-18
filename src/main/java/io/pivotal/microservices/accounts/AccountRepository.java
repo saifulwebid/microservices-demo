@@ -36,4 +36,13 @@ public interface AccountRepository extends Repository<Account, Long> {
 	 */
 	@Query("SELECT count(*) from Account")
 	public int countAccounts();
+	
+	/**
+	 * Save the Account entity.
+	 * 
+	 * @param entity
+	 *            The entity that will be saved.
+	 * @return The saved Account.
+	 */
+	public Account save(Account entity);
 }

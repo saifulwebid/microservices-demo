@@ -34,6 +34,11 @@ public class AccountsControllerTests extends AbstractAccountControllerTests {
 		public int countAccounts() {
 			return 1;
 		}
+
+		@Override
+		public Account save(Account entity) {
+			return entity;
+		}
 	}
 
 	protected TestAccountRepository testRepo = new TestAccountRepository();
