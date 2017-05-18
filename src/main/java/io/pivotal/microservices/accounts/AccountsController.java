@@ -5,9 +5,12 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.pivotal.microservices.accounts.requests.AmountRequest;
 import io.pivotal.microservices.exceptions.AccountNotFoundException;
 
 /**
@@ -57,6 +60,36 @@ public class AccountsController {
 		else {
 			return account;
 		}
+	}
+
+	/**
+	 * Deposit a designated amount to Account.
+	 * 
+	 * @param accountNumber
+	 *            A numeric, 9 digit account number.
+	 * @param request
+	 *            An AmountRequest object reflected from JSON contained in request body.
+	 * @return The deposited account.
+	 * @throws AccountNotFoundException
+	 *             If the number is not recognized.
+	 */
+	@RequestMapping(value = "/accounts/{accountNumber}/deposit", method = RequestMethod.POST)
+	public Account deposit(@PathVariable("accountNumber") String accountNumber,
+			@RequestBody AmountRequest request) {
+
+		logger.info("accounts-service deposit(" + request.getAmount() + ") invoked: " + 
+				accountNumber);
+		
+		Account account = accountRepository.findByNumber(accountNumber);
+		if (account == null)
+			throw new AccountNotFoundException(accountNumber);
+		
+		account.deposit(request.getAmount());
+		accountRepository.save(account);
+		
+		logger.info("accounts-service deposit() deposited: " + account);
+		
+		return account;
 	}
 
 	/**
